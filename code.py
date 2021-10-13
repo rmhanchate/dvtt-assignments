@@ -1,28 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Oct  8 16:28:57 2021
-
-@author: rmh
-"""
 
 from copy import deepcopy
 from functools import reduce
 
-# Reads ISCAS-85 Netlist
-def read_file(filename):
-    
-    f = open(filename,'r')
-    lines = f.readlines()
-    f.close()
-    
-    return lines
-
 # Prints Graph
 def print_dict(dictionary):
-    
-    for k, v in dictionary.items(): print(k, ':', *v, sep='\t')
-    print('\n')
+    for k, v in {k: v for k, v in dictionary.items() if v[0] != 'out'}.items(): print(k, ':', *v, sep='\t', end='\n')
 
 # Parsing
 def parse(lines, gates):
@@ -31,11 +15,9 @@ def parse(lines, gates):
     graph = dict()
     for i in range(len(lines)):
         line = lines[i].replace('\n', '').split('\t')
-        if line[0] == "*": continue
-        elif len(line) > 3:
+        if len(line) > 3:
             if line[2] in gates: data.append(line + lines[i+1].replace('\n', '').split("\t"))
             elif (line[0][:1] != '\t'): data.append(line)
-    
     out_count = 1
     for i in range(len(data)):
         if data[i][2] == 'inpt': graph[data[i][0]] = [data[i][2], [], [], ['sa0', 'sa1']]
@@ -58,14 +40,12 @@ def parse(lines, gates):
 def equifault(graph):
     
     for i in reversed(range(1, len(graph) + 1)):
-        if graph[str(i)][0] == 'out' or graph[str(i)][0] == 'inpt': continue
-        elif graph[str(i)][0] == 'and' or graph[str(i)][0] == 'nand':
+        if graph[str(i)][0] == 'and' or graph[str(i)][0] == 'nand':
             for j in graph[str(i)][1]: graph[str(j)][3].remove('sa0')
         elif graph[str(i)][0] in 'or' or graph[str(i)][0] == 'nor':
             for j in graph[str(i)][1]: graph[str(j)][3].remove('sa1')
         elif graph[str(i)][0] in 'not':
             for j in graph[str(i)][1]: graph[str(j)][3].clear()
-        else: continue
     
     return graph
 
@@ -74,8 +54,7 @@ def domifault(graph):
     
     for i in reversed(range(1, len(graph) + 1)):
         flag = 0
-        if graph[str(i)][0] == 'out': continue
-        elif graph[str(i)][0] == 'and' or graph[str(i)][0] == 'nand':
+        if graph[str(i)][0] == 'and' or graph[str(i)][0] == 'nand':
             graph[str(i)][3].clear()
             for j in graph[str(i)][1]:
                 if 'sa0' in graph[str(j)][3]: flag = 1; break
@@ -91,7 +70,6 @@ def domifault(graph):
                 if j != k and flag == 1:
                     try: graph[str(k)][3].remove('sa1')
                     except ValueError: continue
-        else: continue
     
     return graph
 
@@ -123,7 +101,7 @@ def deductive_sim(graph, test_vector):
         if graph[i][0] == 'inpt': graph[i][4][0] = deepcopy(test_vector[i])
         elif graph[i][0] == 'wire' or graph[i][0] == 'buff': graph[i][4] = deepcopy(graph[graph[i][1][0]][4])
         elif graph[i][0] == 'not': graph[i][4] = [int(not graph[graph[i][1][0]][4][0]), deepcopy(graph[graph[i][1][0]][4][1])]
-        elif graph[i][0] in ['and', 'nand', 'or', 'nor', 'xor', 'xnor']:
+        elif graph[i][0] in ['and', 'nand', 'or', 'nor']:
             if graph[i][0] == 'and': graph[i][4][0] = int(all([graph[j][4][0] for j in graph[i][1]]))
             elif graph[i][0] == 'nand': graph[i][4][0] = int(not all([graph[j][4][0] for j in graph[i][1]]))
             elif graph[i][0] == 'or': graph[i][4][0] = int(any([graph[j][4][0] for j in graph[i][1]]))
@@ -144,7 +122,8 @@ def deductive_sim(graph, test_vector):
 def main():
     
     filename = 'dvtt.isc'
-    lines = read_file(filename)
+    print('\nReading ISCAS-85 Netlist: ', filename)
+    lines = open(filename,'r').readlines()
     gates = {'not', 'and', 'nand', 'or', 'nor', 'xor', 'xnor', 'buff'}
     
     print('\nParsed Circuit:')
@@ -152,17 +131,17 @@ def main():
     graph_copy = deepcopy(graph)
     print_dict(graph)
     
-    print('Equivalence Collapse Fault Circuit:')
+    print('\nEquivalence Collapse Fault Circuit:')
     graph = equifault(graph)
     print_dict(graph)
     
-    print('Dominance Collapse Fault Circuit:')
+    print('\nDominance Collapse Fault Circuit:')
     graph = domifault(graph)
     print_dict(graph)
     
     graph = {k: v for k, v in graph.items() if v[0] != 'out'}
     
-    print('Parallel Fault Simulation:')
+    print('\nParallel Fault Simulation:')
     faults = {'2': 'sa1', '9': 'sa0'}
     test_vector = {'1': 0, '4': 1, '7': 1}
     graph = parallel_sim(graph, faults, test_vector)
@@ -171,7 +150,7 @@ def main():
     graph = deepcopy(graph_copy)
     graph = {k: v for k, v in graph.items() if v[0] != 'out'}
     
-    print('Deductive Fault Simulation:')
+    print('\nDeductive Fault Simulation:')
     graph = deductive_sim(graph, test_vector)
     print_dict(graph)
 
