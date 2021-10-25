@@ -39,36 +39,26 @@ def parse(lines, gates):
 # Equivalence Fault Collapsing
 def equifault(graph):
     
-    for i in reversed(range(1, len(graph) + 1)):
-        if graph[str(i)][0] == 'and' or graph[str(i)][0] == 'nand':
-            for j in graph[str(i)][1]: graph[str(j)][3].remove('sa0')
-        elif graph[str(i)][0] in 'or' or graph[str(i)][0] == 'nor':
-            for j in graph[str(i)][1]: graph[str(j)][3].remove('sa1')
-        elif graph[str(i)][0] in 'not':
-            for j in graph[str(i)][1]: graph[str(j)][3].clear()
+    for i in [str(j) for j in sorted([int(i) for i in list(graph.keys())], reverse = True)]:
+        if graph[i][0] in ['and', 'nand', 'or', 'nor']:
+            for j in graph[i][1]: graph[j][3].remove('sa0' if graph[i][0] in ['and', 'nand'] else 'sa1')
+        elif graph[i][0] in 'not':
+            for j in graph[i][1]: graph[j][3].clear()
     
     return graph
 
 # Dominance Fault Collapsing
 def domifault(graph):
     
-    for i in reversed(range(1, len(graph) + 1)):
+    for i in [str(j) for j in sorted([int(i) for i in list(graph.keys())], reverse = True)]:
         flag = 0
-        if graph[str(i)][0] == 'and' or graph[str(i)][0] == 'nand':
-            graph[str(i)][3].clear()
-            for j in graph[str(i)][1]:
-                if 'sa0' in graph[str(j)][3]: flag = 1; break
-            for k in graph[str(i)][1]: 
+        if graph[i][0] in ['and', 'nand', 'or', 'nor']:
+            graph[i][3].clear()
+            for j in graph[i][1]:
+                if ('sa0' if graph[i][0] in ['and', 'nand'] else 'sa1') in graph[j][3]: flag = 1; break
+            for k in graph[i][1]: 
                 if j != k and flag == 1:
-                    try: graph[str(k)][3].remove('sa0')
-                    except ValueError: continue
-        elif graph[str(i)][0] == 'or' or graph[str(i)][0] == 'nor':
-            graph[str(i)][3].clear()
-            for j in graph[str(i)][1]:
-                if 'sa1' in graph[str(j)][3]: flag = 1; break
-            for k in graph[str(i)][1]: 
-                if j != k and flag == 1:
-                    try: graph[str(k)][3].remove('sa1')
+                    try: graph[k][3].remove('sa0' if graph[i][0] in ['and', 'nand'] else 'sa1')
                     except ValueError: continue
     
     return graph
@@ -94,7 +84,7 @@ def parallel_sim(graph, faults, test_vector):
 
 # Deductive Fault Simulation
 def deductive_sim(graph, test_vector):
-
+    
     for i in graph.keys(): graph[i].append([0, dict()])
     faults = dict()
     for i in [str(j) for j in sorted([int(i) for i in list(graph.keys())])]:
@@ -115,7 +105,29 @@ def deductive_sim(graph, test_vector):
         elif graph[i][0] == 'xor' or graph[i][0] == 'xnor': pass
         graph[i][4][1][i] = 'sa0' if graph[i][4][0] == 1 else 'sa1'
         faults.update(graph[i][4][1])
+    
+    return graph
 
+# SCOAP Controllability and Observability
+def scoap(graph):
+    
+    for i in graph.keys(): graph[i].append([0]*3)
+    for i in [str(j) for j in sorted([int(i) for i in list(graph.keys())])]:
+        if graph[i][0] == 'inpt': graph[i][3][:2] = [1, 1]
+        elif graph[i][0] == 'wire': graph[i][3][:2] = deepcopy(graph[graph[i][1][0]][3][:2])
+        elif graph[i][0] == 'not': graph[i][3][:2] = [j + 1 for j in graph[graph[i][1][0]][3][:2]]
+        elif graph[i][0] == 'and' or graph[i][0] == 'nor': graph[i][3][:2] = [min([graph[graph[i][1][j]][3][(0 if graph[i][0] == 'and' else 1)] for j in range(len(graph[i][1]))]) + 1, sum([graph[graph[i][1][j]][3][(1 if graph[i][0] == 'and' else 0)] for j in range(len(graph[i][1]))]) + 1]
+        elif graph[i][0] == 'nand' or graph[i][0] == 'or': graph[i][3][:2] = [sum([graph[graph[i][1][j]][3][(1 if graph[i][0] == 'nand' else 0)] for j in range(len(graph[i][1]))]) + 1, min([graph[graph[i][1][j]][3][(0 if graph[i][0] == 'nand' else 1)] for j in range(len(graph[i][1]))]) + 1]
+        elif graph[i][0] == 'xor' or graph[i][0] == 'xnor': pass
+    for i in [str(j) for j in sorted([int(i) for i in list(graph.keys())], reverse = True)]:
+        if graph[i][0] == 'wire':
+            graph[graph[i][1][0]][3][2] = min([graph[graph[graph[i][1][0]][2][j]][3][2] for j in range(len(graph[graph[i][1][0]][2]))])
+        elif graph[i][0] == 'not': 
+            for j in graph[i][1]: graph[j][3][2] = graph[i][3][2] + 1
+        elif graph[i][0] in ['and', 'nand', 'or', 'nor']:
+            for j in graph[i][1]: graph[j][3][2] = sum([graph[k][3][(1 if graph[i][0] in ['and', 'nand'] else 0)] for k in graph[i][1] if k != j]) + graph[i][3][2] + 1
+        elif graph[i][0] == 'xor' or graph[i][0] == 'xnor': pass
+    
     return graph
 
 # Driver Code
@@ -139,20 +151,22 @@ def main():
     graph = domifault(graph)
     print_dict(graph)
     
-    graph = {k: v for k, v in graph.items() if v[0] != 'out'}
-    
     print('\nParallel Fault Simulation:')
     faults = {'2': 'sa1', '9': 'sa0'}
-    test_vector = {'1': 0, '4': 1, '7': 1}
+    test_vector = {'1': 0, '4': 1, '7': 0}
+    graph = {k: v for k, v in graph.items() if v[0] != 'out'}
     graph = parallel_sim(graph, faults, test_vector)
     print_dict(graph)
     
-    graph = deepcopy(graph_copy)
-    graph = {k: v for k, v in graph.items() if v[0] != 'out'}
-    
     print('\nDeductive Fault Simulation:')
+    graph = {k: v for k, v in deepcopy(graph_copy).items() if v[0] != 'out'}
     graph = deductive_sim(graph, test_vector)
     print_dict(graph)
-
+    
+    print('\nSCOAP Controllability and Observability:')
+    graph = {k: v[0:-1] for k, v in deepcopy(graph_copy).items() if v[0] != 'out'}
+    graph = scoap(graph)
+    print_dict(graph)
+    
 if __name__ == '__main__':
     main()
