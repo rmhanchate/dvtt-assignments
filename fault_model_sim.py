@@ -120,8 +120,7 @@ def scoap(graph):
         elif graph[i][0] == 'nand' or graph[i][0] == 'or': graph[i][3][:2] = [sum([graph[graph[i][1][j]][3][(1 if graph[i][0] == 'nand' else 0)] for j in range(len(graph[i][1]))]) + 1, min([graph[graph[i][1][j]][3][(0 if graph[i][0] == 'nand' else 1)] for j in range(len(graph[i][1]))]) + 1]
         elif graph[i][0] == 'xor' or graph[i][0] == 'xnor': pass
     for i in [str(j) for j in sorted([int(i) for i in list(graph.keys())], reverse = True)]:
-        if graph[i][0] == 'wire':
-            graph[graph[i][1][0]][3][2] = min([graph[graph[graph[i][1][0]][2][j]][3][2] for j in range(len(graph[graph[i][1][0]][2]))])
+        if graph[i][0] == 'wire': graph[graph[i][1][0]][3][2] = min([graph[graph[graph[i][1][0]][2][j]][3][2] for j in range(len(graph[graph[i][1][0]][2]))])
         elif graph[i][0] == 'not': 
             for j in graph[i][1]: graph[j][3][2] = graph[i][3][2] + 1
         elif graph[i][0] in ['and', 'nand', 'or', 'nor']:

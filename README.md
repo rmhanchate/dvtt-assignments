@@ -6,3 +6,6 @@ ISCAS-85 Netlist is parsed and a dictionary is generated. The following tasks ha
  2. Obtaining collapsed faults using equivalence and dominant fault collapsing.
  3. Parallel and Deductive Fault Simulation.
  4. SCOAP Controllability and Observability.
+
+## Roth's D-Algorithm
+Test Vectors generated for a combinational circuit. Supports only two-input gates.
