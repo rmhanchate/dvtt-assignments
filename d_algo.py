@@ -5,9 +5,9 @@ import sys
 from copy import deepcopy
 from utils import print_dict, parse
 
-dcubes = [[[['0', 'X', '0'], ['X', '0', '0'], ['1', '1', '1'], ['N', 'N', 'N']], [['0', 'X', '1'], ['X', '0', '1'], ['1', '1', '0'], ['N', 'N', 'N']], [['0', '0', '0'], ['X', '1', '1'], ['1', 'X', '1'], ['N', 'N', 'N']], [['0', '0', '1'], ['X', '1', '0'], ['1', 'X', '0'], ['N', 'N', 'N']], [['0', '0', '0'], ['0', '1', '1'], ['1', '0', '1'], ['1', '1', '0']], [['0', '0', '1'], ['0', '1', '0'], ['1', '0', '0'], ['1', '1', '1']], [['0', 'N', '1'], ['1', 'N', '0'], ['N', 'N', 'N'], ['N', 'N', 'N']], [['0', '0', '0'], ['1', '1', '1'], ['N', 'N', 'N'], ['N', 'N', 'N']]],
-          [[['1', '1', 'D'], ['0', 'X', 'E'], ['X', '0', 'E'], ['N', 'N', 'N']], [['1', '1', 'E'], ['0', 'X', 'D'], ['X', '0', 'D'], ['N', 'N', 'N']], [['0', '0', 'E'], ['X', '1', 'D'], ['1', 'X', 'D'], ['N', 'N', 'N']], [['0', '0', 'D'], ['X', '1', 'E'], ['1', 'X', 'E'], ['N', 'N', 'N']], [['0', '1', 'D'], ['1', '0', 'D'], ['0', '0', 'E'], ['1', '1', 'E']], [['0', '0', 'D'], ['1', '1', 'D'], ['0', '1', 'E'], ['1', '0', 'E']], [['0', 'N', 'D'], ['1', 'N', 'E'], ['N', 'N', 'N'], ['N', 'N', 'N']], [['0', '0', 'E'], ['1', '1', 'D'], ['N', 'N', 'N'], ['N', 'N', 'N']]],
-          [[['E', '1', 'E'], ['1', 'E', 'E'], ['D', '1', 'D'], ['1', 'D', 'D']], [['E', '1', 'D'], ['1', 'E', 'D'], ['D', '1', 'E'], ['1', 'D', 'E']], [['E', '0', 'E'], ['0', 'E', 'E'], ['D', '0', 'D'], ['0', 'D', 'D']], [['E', '0', 'D'], ['0', 'E', 'D'], ['D', '0', 'E'], ['0', 'D', 'E']], [['E', '0', 'E'], ['D', '0', 'D'], ['D', '1', 'E'], ['E', '1', 'D']], [['E', '0', 'D'], ['D', '0', 'E'], ['D', '1', 'D'], ['E', '1', 'E']], [['D', 'N', 'E'], ['E', 'N', 'D'], ['N', 'N', 'N'], ['N', 'N', 'N']], [['D', 'D', 'D'], ['E', 'E', 'E'], ['N', 'N', 'N'], ['N', 'N', 'N']]]]
+dcubes = [[[['0', 'X', '0'], ['X', '0', '0'], ['1', '1', '1'], ['N', 'N', 'N']], [['0', 'X', '1'], ['X', '0', '1'], ['1', '1', '0'], ['N', 'N', 'N']], [['0', '0', '0'], ['X', '1', '1'], ['1', 'X', '1'], ['N', 'N', 'N']], [['0', '0', '1'], ['X', '1', '0'], ['1', 'X', '0'], ['N', 'N', 'N']], [['0', '0', '0'], ['0', '1', '1'], ['1', '0', '1'], ['1', '1', '0']], [['0', '0', '1'], ['0', '1', '0'], ['1', '0', '0'], ['1', '1', '1']], [['0', '1', 'N'], ['1', '0', 'N'], ['N', 'N', 'N'], ['N', 'N', 'N']], [['0', '0', '0'], ['1', '1', '1'], ['N', 'N', 'N'], ['N', 'N', 'N']]],
+          [[['1', '1', 'D'], ['0', 'X', 'E'], ['X', '0', 'E'], ['N', 'N', 'N']], [['1', '1', 'E'], ['0', 'X', 'D'], ['X', '0', 'D'], ['N', 'N', 'N']], [['0', '0', 'E'], ['X', '1', 'D'], ['1', 'X', 'D'], ['N', 'N', 'N']], [['0', '0', 'D'], ['X', '1', 'E'], ['1', 'X', 'E'], ['N', 'N', 'N']], [['0', '1', 'D'], ['1', '0', 'D'], ['0', '0', 'E'], ['1', '1', 'E']], [['0', '0', 'D'], ['1', '1', 'D'], ['0', '1', 'E'], ['1', '0', 'E']], [['0', 'D', 'N'], ['1', 'E', 'N'], ['N', 'N', 'N'], ['N', 'N', 'N']], [['0', '0', 'E'], ['1', '1', 'D'], ['N', 'N', 'N'], ['N', 'N', 'N']]],
+          [[['E', '1', 'E'], ['1', 'E', 'E'], ['D', '1', 'D'], ['1', 'D', 'D']], [['E', '1', 'D'], ['1', 'E', 'D'], ['D', '1', 'E'], ['1', 'D', 'E']], [['E', '0', 'E'], ['0', 'E', 'E'], ['D', '0', 'D'], ['0', 'D', 'D']], [['E', '0', 'D'], ['0', 'E', 'D'], ['D', '0', 'E'], ['0', 'D', 'E']], [['E', '0', 'E'], ['D', '0', 'D'], ['D', '1', 'E'], ['E', '1', 'D']], [['E', '0', 'D'], ['D', '0', 'E'], ['D', '1', 'D'], ['E', '1', 'E']], [['D', 'E', 'N'], ['E', 'D', 'N'], ['N', 'N', 'N'], ['N', 'N', 'N']], [['D', 'D', 'D'], ['E', 'E', 'E'], ['N', 'N', 'N'], ['N', 'N', 'N']]]]
 
 dinter = {'0': {'0': '0', '1': 'C', 'X': '0', 'D': 'C', 'E': 'C', 'N': 'C'},
           '1': {'0': 'C', '1': '1', 'X': '1', 'D': 'C', 'E': 'C', 'N': 'C'},
@@ -54,7 +54,7 @@ def primdc(graph):
             graph[graph[graph[fault_site][1][0]][2][1]][3] = tcube[1]
             graph[graph[graph[fault_site][1][0]][2][0]][3] = tcube[2]
         
-    elif graph[fault_site][0] in ['and', 'nand', 'or', 'nor']:
+    elif graph[fault_site][0] in ['and', 'nand', 'or', 'nor', 'xor', 'xnor']:
         tcube = [graph[graph[fault_site][1][0]][3], graph[graph[fault_site][1][1]][3], graph[fault_site][3]]
         paths = [[dinter[tcube[j]][dcubes[1][gatei[graph[fault_site][0]]][i][j]] for j in range(len(tcube))] for i in range(len(dcubes[1][gatei[graph[fault_site][0]]])) if 'C' not in [dinter[tcube[j]][dcubes[1][gatei[graph[fault_site][0]]][i][j]] for j in range(len(tcube))]]
         if len(paths) == 1: [graph[graph[fault_site][1][0]][3], graph[graph[fault_site][1][1]][3], graph[fault_site][3]] = paths[0]
@@ -70,10 +70,11 @@ def primdc(graph):
             else: create_pdcf(graph, paths)
         else: return 1, graph
 
-    elif graph[fault_site][0] == 'xor': pass
-    elif graph[fault_site][0] == 'xnor': pass
-    elif graph[fault_site][0] == 'not': pass
-
+    elif graph[fault_site][0] == 'not':
+        tcube = [graph[graph[fault_site][1][0]][3], graph[fault_site][3]]
+        for i in range(len(tcube)): tcube[i] = dinter[tcube[i]][dcubes[1][gatei[graph[fault_site][0]]][(1 if graph[fault_site][3] == 'D' else 0)][i]]
+        [graph[graph[fault_site][1][0]][3], graph[fault_site][3]] = tcube
+    
     return 0, graph
 
 # D Drive for Propagating Fault Effect
@@ -109,13 +110,14 @@ def ddrive(graph, node):
             else: node = create_pdf_fan(node, graph)
         
         elif len(graph[node][2]) == 1:
-            if graph[graph[node][2][0]][0] in ['and', 'nand', 'or', 'nor']:
-                tcube = [graph[graph[graph[node][2][0]][1][0]][3], graph[graph[graph[node][2][0]][1][1]][3], graph[graph[node][2][0]][3]]
+            if graph[graph[node][2][0]][0] in ['and', 'nand', 'or', 'nor', 'xor', 'xnor', 'not']:
+                tcube = [graph[graph[graph[node][2][0]][1][0]][3], graph[graph[graph[node][2][0]][1][1]][3], graph[graph[node][2][0]][3]] if graph[graph[node][2][0]][0] in ['and', 'nand', 'or', 'nor', 'xor', 'xnor'] else [graph[graph[graph[node][2][0]][1][0]][3], graph[graph[node][2][0]][3]]
                 paths = [[dinter[tcube[j]][dcubes[2][gatei[graph[graph[node][2][0]][0]]][i][j]] for j in range(len(tcube))] for i in range(len(dcubes[2][gatei[graph[graph[node][2][0]][0]]])) if 'C' not in [dinter[tcube[j]][dcubes[2][gatei[graph[graph[node][2][0]][0]]][i][j]] for j in range(len(tcube))]]
                 if tcube == ['D', 'D', 'X']: paths.append(['D', 'D', 'D']) if graph[graph[node][2][0]][0] in ['and', 'or'] else paths.append(['D', 'D', 'E'])
                 elif tcube == ['E', 'E', 'X']: paths.append(['E', 'E', 'E']) if graph[graph[node][2][0]][0] in ['and', 'or'] else paths.append(['E', 'E', 'D'])
                 if len(paths) == 1:
-                    [graph[graph[graph[node][2][0]][1][0]][3], graph[graph[graph[node][2][0]][1][1]][3], graph[graph[node][2][0]][3]] = paths[0]
+                    if graph[graph[node][2][0]][0] in ['and', 'nand', 'or', 'nor', 'xor', 'xnor']: [graph[graph[graph[node][2][0]][1][0]][3], graph[graph[graph[node][2][0]][1][1]][3], graph[graph[node][2][0]][3]] = paths[0] 
+                    else: [graph[graph[graph[node][2][0]][1][0]][3], graph[graph[node][2][0]][3]] = paths[0]
                     node = graph[node][2][0]
                 elif len(paths) > 1:
                     if dut.locat:
@@ -129,9 +131,6 @@ def ddrive(graph, node):
                     node = graph[node][2][0]
                 else: return 1, graph
                 
-            elif graph[graph[node][2][0]][0] == 'xor': pass
-            elif graph[graph[node][2][0]][0] == 'xnor': pass
-            elif graph[graph[node][2][0]][0] == 'not': pass
             elif graph[graph[node][2][0]][0] == 'out': break
         
     return 0, graph
@@ -150,14 +149,15 @@ def justify(graph):
                     if paths: [graph[graph[i][1][0]][3], graph[graph[graph[i][1][0]][2][0]][3], graph[graph[graph[i][1][0]][2][1]][3]] = paths[0]
                     else: return 1, graph
             
-            elif graph[i][0] in ['and', 'nand', 'or', 'nor']:
-                tcube = [graph[graph[i][1][0]][3], graph[graph[i][1][1]][3], graph[i][3]]
-                if tcube == ['X', 'X', 'X']: continue
+            elif graph[i][0] in ['and', 'nand', 'or', 'nor', 'xor', 'xnor', 'not']:
+                tcube = [graph[graph[i][1][0]][3], graph[graph[i][1][1]][3], graph[i][3]] if graph[i][0] in ['and', 'nand', 'or', 'nor', 'xor', 'xnor'] else [graph[graph[i][1][0]][3], graph[i][3]]
+                if (tcube == ['X', 'X', 'X'] and graph[i][0] in ['and', 'nand', 'or', 'nor', 'xor', 'xnor']) or (tcube == ['X', 'X'] and graph[i][0] == 'not'): continue
                 elif 'X' in tcube:
                     paths = [[dinter[tcube[j]][dcubes[0][gatei[graph[i][0]]][k][j]] for j in range(len(tcube))] for k in range(len(dcubes[0][gatei[graph[i][0]]])) if 'C' not in [dinter[tcube[j]][dcubes[0][gatei[graph[i][0]]][k][j]] for j in range(len(tcube))]]
                     visit = [0]*len(paths)
                     if len(paths) == 1:
-                        [graph[graph[i][1][0]][3], graph[graph[i][1][1]][3], graph[i][3]] = paths[0]
+                        if graph[i][0] in ['and', 'nand', 'or', 'nor', 'xor', 'xnor']: [graph[graph[i][1][0]][3], graph[graph[i][1][1]][3], graph[i][3]] = paths[0]
+                        else: [graph[graph[i][1][0]][3], graph[i][3]] = paths[0]
                         visit[0] = 1
                     elif len(paths) > 1:
                         if dut.locat[-1] == i and dut.typef[-1] == 'sc':
@@ -171,9 +171,6 @@ def justify(graph):
                             [graph[graph[i][1][0]][3], graph[graph[i][1][1]][3], graph[i][3]] = paths[0]
                             dut.add_path(i, 'sc', paths, [graph]*len(paths), visit)
                     else: return 1, graph
-            
-            elif graph[i][0] == 'xor': pass
-            elif graph[i][0] == 'xnor': pass
             
     return 0, graph
 
@@ -220,7 +217,6 @@ def main():
     
     global dut
     dut = checkpoint()
-    flag = 0
     
     flag, graph = primdc(graph)
     if flag == 1: flag, graph = stack_ops(graph, 'primdc')
