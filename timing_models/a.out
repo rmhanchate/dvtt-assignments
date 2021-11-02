@@ -1,0 +1,84 @@
+#! /usr/bin/vvp
+:ivl_version "10.3 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "system";
+:vpi_module "vhdl_sys";
+:vpi_module "v2005_math";
+:vpi_module "va_math";
+S_0x556ffe92b010 .scope module, "a_tb" "a_tb" 2 1;
+ .timescale 0 0;
+v0x556ffe95f610_0 .var "in_a", 0 0;
+v0x556ffe95f6d0_0 .var "in_b", 0 0;
+v0x556ffe95f7a0_0 .var "in_c", 0 0;
+v0x556ffe95f8a0_0 .net "out", 0 0, L_0x556ffe9600b0;  1 drivers
+S_0x556ffe92b190 .scope module, "dut" "comb_delay" 2 5, 3 1 0, S_0x556ffe92b010;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "in_a"
+    .port_info 1 /INPUT 1 "in_b"
+    .port_info 2 /INPUT 1 "in_c"
+    .port_info 3 /OUTPUT 1 "out"
+L_0x556ffe95f970/d .functor AND 1, v0x556ffe95f610_0, v0x556ffe95f6d0_0, C4<1>, C4<1>;
+L_0x556ffe95f970 .delay 1 (4,4,4) L_0x556ffe95f970/d;
+L_0x556ffe95fb00/d .functor OR 1, v0x556ffe95f6d0_0, v0x556ffe95f7a0_0, C4<0>, C4<0>;
+L_0x556ffe95fb00 .delay 1 (4,4,4) L_0x556ffe95fb00/d;
+L_0x556ffe95fc60/d .functor NAND 1, L_0x556ffe95f970, L_0x556ffe95fb00, C4<1>, C4<1>;
+L_0x556ffe95fc60 .delay 1 (3,3,3) L_0x556ffe95fc60/d;
+L_0x556ffe95fe10/d .functor NOR 1, L_0x556ffe95f970, v0x556ffe95f610_0, C4<0>, C4<0>;
+L_0x556ffe95fe10 .delay 1 (3,3,3) L_0x556ffe95fe10/d;
+L_0x556ffe95ff50/d .functor OR 1, L_0x556ffe95fc60, v0x556ffe95f7a0_0, C4<0>, C4<0>;
+L_0x556ffe95ff50 .delay 1 (4,4,4) L_0x556ffe95ff50/d;
+L_0x556ffe9600b0/d .functor AND 1, L_0x556ffe95fe10, L_0x556ffe95ff50, C4<1>, C4<1>;
+L_0x556ffe9600b0 .delay 1 (4,4,4) L_0x556ffe9600b0/d;
+v0x556ffe94cad0_0 .net "fan_1", 0 0, L_0x556ffe95f970;  1 drivers
+v0x556ffe95ef30_0 .net "fan_2", 0 0, L_0x556ffe95fb00;  1 drivers
+v0x556ffe95eff0_0 .net "fan_3", 0 0, L_0x556ffe95fc60;  1 drivers
+v0x556ffe95f0c0_0 .net "fan_4", 0 0, L_0x556ffe95fe10;  1 drivers
+v0x556ffe95f180_0 .net "fan_5", 0 0, L_0x556ffe95ff50;  1 drivers
+v0x556ffe95f290_0 .net "in_a", 0 0, v0x556ffe95f610_0;  1 drivers
+v0x556ffe95f350_0 .net "in_b", 0 0, v0x556ffe95f6d0_0;  1 drivers
+v0x556ffe95f410_0 .net "in_c", 0 0, v0x556ffe95f7a0_0;  1 drivers
+v0x556ffe95f4d0_0 .net "out", 0 0, L_0x556ffe9600b0;  alias, 1 drivers
+    .scope S_0x556ffe92b010;
+T_0 ;
+    %vpi_call 2 8 "$dumpfile", "a.vcd" {0 0 0};
+    %vpi_call 2 9 "$dumpvars", 32'sb00000000000000000000000000000000, S_0x556ffe92b010 {0 0 0};
+    %end;
+    .thread T_0;
+    .scope S_0x556ffe92b010;
+T_1 ;
+    %pushi/vec4 100, 0, 32;
+T_1.0 %dup/vec4;
+    %pushi/vec4 0, 0, 32;
+    %cmp/s;
+    %jmp/1xz T_1.1, 5;
+    %jmp/1 T_1.1, 4;
+    %pushi/vec4 1, 0, 32;
+    %sub;
+    %delay 10, 0;
+    %vpi_func 2 14 "$random" 32 {0 0 0};
+    %pushi/vec4 2, 0, 32;
+    %mod;
+    %pad/u 1;
+    %store/vec4 v0x556ffe95f610_0, 0, 1;
+    %vpi_func 2 15 "$random" 32 {0 0 0};
+    %pushi/vec4 2, 0, 32;
+    %mod;
+    %pad/u 1;
+    %store/vec4 v0x556ffe95f6d0_0, 0, 1;
+    %vpi_func 2 16 "$random" 32 {0 0 0};
+    %pushi/vec4 2, 0, 32;
+    %mod;
+    %pad/u 1;
+    %store/vec4 v0x556ffe95f7a0_0, 0, 1;
+    %jmp T_1.0;
+T_1.1 ;
+    %pop/vec4 1;
+    %end;
+    .thread T_1;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "a_tb.v";
+    "a1.v";
